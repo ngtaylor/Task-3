@@ -57,24 +57,24 @@ loop2	LDI R0, global	;checks for G
 start	LD R0, pipe	;Prints pipe (STARTING SEQUENCE)
 	TRAP x21
 loop3	LDI R0, global	;checks for U
-	BRz loop3	
-	TRAP x21
-	AND R1, R1, #0
-	STI R1, global
-	LD R1, Uchar
-	ADD R0, R0, R1
-	BRnp loop3	
+	BRz loop3	;if no new chracter, loop
+	TRAP x21	;if loop falls through, then print
+	AND R1, R1, #0	;clears R1
+	STI R1, global	;stores 0 at global
+	LD R1, Uchar	;Loads -U into R1
+	ADD R0, R0, R1	;Checks for U
+	BRnp loop3	;if no match then go back to loop3
 loop4	LDI R0, global	;checks for A
-	BRz loop4
-	TRAP x21
-	AND R1, R1, #0
-	STI R1, global
-	LD R1, Achar
-	ADD R0, R0, R1
-	BRz Afound
+	BRz loop4	;if no new character, loop
+	TRAP x21	;If loops falls through, then print	
+	AND R1, R1, #0	;clears R1
+	STI R1, global	;stores 0 at global
+	LD R1, Achar	;Loads -A into R1
+	ADD R0, R0, R1	;Checks for A
+	BRz Afound	;If A, go to Afound
 	ADD R0, R0, #-6	;checks for G
-	BRz Gfound
-	BRnp loop3
+	BRz Gfound	;If G, go to Gfound
+	BRnp loop3	;If neither, go back to loop3
 Afound	LDI R0, global	;checks for A
 	BRz Afound
 	TRAP x21
@@ -82,12 +82,12 @@ Afound	LDI R0, global	;checks for A
 	STI R1, global
 	LD R1, Achar
 	ADD R0, R0, R1
-	BRz done
+	BRz done	;If this next character is A, we are done
 	ADD R0, R0, #-6	;checks for G
-	BRz done
+	BRz done	;If G, we are done
 	ADD R0, R0, #-14
-	BRz loop4
-	BRnp loop3
+	BRz loop4	;if U, go to loop4
+	BRnp loop3	;if C, go back to loop3
 Gfound	LDI R0, global	;checks for A
 	BRz Gfound
 	TRAP x21
@@ -95,11 +95,11 @@ Gfound	LDI R0, global	;checks for A
 	STI R1, global
 	LD R1, Achar
 	ADD R0, R0, R1
-	BRz done
+	BRz done	;If the new character is A, we are done
 	ADD R0, R0, #-10
 	ADD R0, R0, #-10
-	BRz loop4
-	BRnp loop3
+	BRz loop4	;if U, go to loop4
+	BRnp loop3	;if not U, go to loop3
 done	TRAP x25
 
 
