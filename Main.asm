@@ -21,39 +21,39 @@
 
 
 ; start of actual program
-	AND R0, R0, #0
-	STI R0, global
+	AND R0, R0, #0	;sets R0 to 0
+	STI R0, global	;stores 0 at global
 loop	LDI R0, global	;checks for A
-	BRz loop
-	TRAP x21
-	AND R1, R1, #0
-	STI R1, global
-	LD R1, Achar
-	ADD R0, R0, R1
-	BRnp loop
+	BRz loop	;if global has 0, then loop to check again
+	TRAP x21	;if loop falls through, print keystroke
+	AND R1, R1, #0	;set R1 to 0
+	STI R1, global	;store R1 at global
+	LD R1, Achar	;load -A into R1
+	ADD R0, R0, R1	;add R1 and r0
+	BRnp loop	;checks if same, if not same loop back
 loop1	LDI R0, global	;checks for U
-	BRz loop1	
-	TRAP x21
-	AND R1, R1, #0
-	STI R1, global
-	LD R1, Uchar
-	ADD R0, R0, R1
-	BRz loop2
-	ADD R0, R0, #10
-	ADD R0, R0, #10
-	BRz loop1
-	BRnp loop
+	BRz loop1	;if no new character, then loop back to loop1
+	TRAP x21	;if loop falls through, print
+	AND R1, R1, #0	;sets r1 to 0
+	STI R1, global	;stores 0 at global
+	LD R1, Uchar	;loads -U into R1
+	ADD R0, R0, R1	;compares R0 and R1
+	BRz loop2	;if equal, then go to loop2
+	ADD R0, R0, #10	;adds 10 back to R0
+	ADD R0, R0, #10	;adds 10 back to R0
+	BRz loop1	;if match, then go back to loop 1
+	BRnp loop	;if no match, then start over
 loop2	LDI R0, global	;checks for G
-	BRz loop2
-	TRAP x21
-	AND R1, R1, #0
-	STI R1, global
-	LD R1, Gchar
-	ADD R0, R0, R1
-	BRz start
-	ADD R0, R0, #6
-	BRz loop1
-	BRnp loop
+	BRz loop2	;if no new character, loop
+	TRAP x21	;if loop falls through, then print
+	AND R1, R1, #0	;sets r1 to 0
+	STI R1, global	;stores 0 at global
+	LD R1, Gchar	;loads -G into r1
+	ADD R0, R0, R1	;checks for G
+	BRz start	;if match, then start codon has been detected
+	ADD R0, R0, #6	;add 6 back to R0
+	BRz loop1	;if new match then branch back to loop1
+	BRnp loop	;if no match, then start over
 start	LD R0, pipe	;Prints pipe (STARTING SEQUENCE)
 	TRAP x21
 loop3	LDI R0, global	;checks for U
@@ -113,3 +113,4 @@ Uchar	.FILL xFFAB
 Gchar	.FILL xFFB9
 pipe	.FILL x007C
 		.END
+
